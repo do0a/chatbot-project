@@ -53,11 +53,34 @@ def save_note(subject, question, answer):
 def load_notes(subject):
     file_path = get_note_file(subject)
 
-    # 아직 저장된 오답이 없는 경우
     if not os.path.exists(file_path):
-        return ""
+        return []
 
     with open(file_path, "r", encoding="utf-8") as f:
-        notes = f.read()
+        content = f.read()
+
+    notes = []
+
+    sections = content.split("========================================")
+
+    for section in sections:
+        section = section.strip()
+
+        if not section:
+            continue
+
+        question = ""
+        answer = ""
+
+        if "질문:" in section and "AI 답변:" in section:
+            question_part, answer_part = section.split("AI 답변:", 1)
+
+            question = question_part.replace("질문:", "").strip()
+            answer = answer_part.strip()
+
+            notes.append({
+                "question": question,
+                "answer": answer
+            })
 
     return notes

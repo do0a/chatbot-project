@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>퀴즈 풀기</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            font-family: Arial, sans-serif;
+
+            background-color: #f5f7fb;
+
+            color: #222;
+        }
+
+
+        .container {
+
+            width: 850px;
+
+            max-width: 92%;
+
+            margin: 50px auto 70px;
+        }
+
+
+        /* =========================
+           제목
+        ========================= */
+
+        .header {
+
+            text-align: center;
+
+            margin-bottom: 30px;
+        }
+
+
+        .header h1 {
+
+            margin: 0 0 10px;
+
+            font-size: 30px;
+        }
+
+
+        .header p {
+
+            margin: 0;
+
+            color: #777;
+
+            font-size: 15px;
+        }
+
+
+        /* =========================
+           과목 선택
+        ========================= */
+
+        .subject-box {
+
+            background-color: white;
+
+            padding: 20px;
+
+            margin-bottom: 25px;
+
+            border-radius: 14px;
+
+            border: 1px solid #e9ebf0;
+
+            box-shadow:
+                0 3px 12px rgba(0, 0, 0, 0.05);
+        }
+
+
+        .subject-label {
+
+            display: block;
+
+            margin-bottom: 10px;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            color: #555;
+        }
+
+
+        .subject-select {
+
+            width: 100%;
+
+            padding: 12px;
+
+            border: 1px solid #ddd;
+
+            border-radius: 9px;
+
+            background-color: white;
+
+            font-size: 15px;
+
+            outline: none;
+
+            cursor: pointer;
+        }
+
+
+        .subject-select:focus {
+
+            border-color: #4f6df5;
+        }
+
+
+        /* =========================
+           퀴즈 카드
+        ========================= */
+
+        .quiz-card {
+
+            background-color: white;
+
+            margin-bottom: 20px;
+
+            padding: 25px;
+
+            border-radius: 14px;
+
+            border: 1px solid #e9ebf0;
+
+            box-shadow:
+                0 3px 12px rgba(0, 0, 0, 0.05);
+        }
+
+
+        .question-number {
+
+            margin-bottom: 10px;
+
+            color: #4f6df5;
+
+            font-size: 14px;
+
+            font-weight: bold;
+        }
+
+
+        .question-text {
+
+            margin-bottom: 20px;
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            line-height: 1.6;
+        }
+
+
+        /* =========================
+           보기
+        ========================= */
+
+        .option {
+
+            display: block;
+
+            margin-bottom: 10px;
+
+            padding: 14px;
+
+            border: 1px solid #e2e4e8;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            transition: 0.15s;
+        }
+
+
+        .option:hover {
+
+            background-color: #f5f7fb;
+
+            border-color: #4f6df5;
+        }
+
+
+        .option input {
+
+            margin-right: 10px;
+
+            cursor: pointer;
+        }
+
+
+        /* =========================
+           제출 버튼
+        ========================= */
+
+        .submit-button {
+
+            display: block;
+
+            width: 100%;
+
+            padding: 14px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background-color: #4f6df5;
+
+            color: white;
+
+            font-size: 16px;
+
+            cursor: pointer;
+
+            margin-top: 10px;
+        }
+
+
+        .submit-button:hover {
+
+            background-color: #3d59d8;
+        }
+
+
+        /* =========================
+           결과
+        ========================= */
+
+        .result {
+
+            background-color: white;
+
+            padding: 25px;
+
+            border-radius: 14px;
+
+            border: 1px solid #e9ebf0;
+
+            text-align: center;
+
+            margin-bottom: 20px;
+        }
+
+
+        .result h2 {
+
+            margin: 0 0 10px;
+
+            font-size: 24px;
+        }
+
+
+        .score {
+
+            font-size: 32px;
+
+            font-weight: bold;
+
+            color: #4f6df5;
+        }
+
+
+        /* =========================
+           퀴즈 없음
+        ========================= */
+
+        .empty {
+
+            background-color: white;
+
+            border: 1px solid #e9ebf0;
+
+            border-radius: 14px;
+
+            padding: 60px 20px;
+
+            text-align: center;
+
+            color: #888;
+
+            box-shadow:
+                0 3px 12px rgba(0, 0, 0, 0.05);
+
+            margin-bottom: 20px;
+        }
+
+
+        .empty-icon {
+
+            font-size: 45px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .empty-text {
+
+            font-size: 16px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =========================
+           홈
+        ========================= */
+
+        .back {
+
+            display: block;
+
+            width: fit-content;
+
+            margin: 30px auto 0;
+
+            padding: 10px 18px;
+
+            border-radius: 9px;
+
+            background-color: white;
+
+            color: #666;
+
+            text-decoration: none;
+
+            border: 1px solid #e5e7eb;
+        }
+
+
+        .back:hover {
+
+            color: #4f6df5;
+
+            border-color: #4f6df5;
+        }
+
+
+        /* =========================
+           모바일
+        ========================= */
+
+        @media (max-width: 600px) {
+
+            .container {
+
+                width: 94%;
+
+                margin-top: 30px;
+            }
+
+
+            .header h1 {
+
+                font-size: 25px;
+            }
+
+
+            .quiz-card {
+
+                padding: 18px;
+            }
+
+
+            .question-text {
+
+                font-size: 16px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="container">
+
+
+        <!-- =========================
+             제목
+        ========================= -->
+
+        <div class="header">
+
+            <h1>
+                📝 퀴즈 풀기
+            </h1>
+
+            <p>
+                오답 노트를 바탕으로 만든 복습 퀴즈입니다.
+            </p>
+
+        </div>
+
+
+        <!-- =========================
+             과목 선택
+        ========================= -->
+
+        <div class="subject-box">
+
+            <label
+                for="subject"
+                class="subject-label"
+            >
+                📚 퀴즈 과목 선택
+            </label>
+
+
+            <select
+                id="subject"
+                class="subject-select"
+                onchange="changeSubject(this.value)"
+            >
+
+                <option value="">
+                    과목을 선택하세요
+                </option>
+
+
+                {% for subject in subjects %}
+
+                <option
+                    value="{{ subject }}"
+                    {% if subject == selected_subject %}
+                    selected
+                    {% endif %}
+                >
+
+                    {{ subject }}
+
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- =========================
+             과목을 선택하지 않은 경우
+        ========================= -->
+
+        {% if not selected_subject %}
+
+        <div class="empty">
+
+            <div class="empty-icon">
+                📚
+            </div>
+
+            <div class="empty-text">
+
+                먼저 과목을 선택해주세요.
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             퀴즈가 없는 경우
+        ========================= -->
+
+        {% elif not quiz %}
+
+        <div class="empty">
+
+            <div class="empty-icon">
+                📝
+            </div>
+
+            <div class="empty-text">
+
+                "{{ selected_subject }}" 과목의
+                오답 노트가 없어서 퀴즈를 만들 수 없습니다.
+
+                <br><br>
+
+                먼저 질문하기에서 내용을 질문하고
+                오답 노트에 저장해주세요.
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             퀴즈가 있는 경우
+        ========================= -->
+
+        {% else %}
+
+
+        <form id="quiz-form">
+
+
+            {% for question in quiz %}
+
+            {% set question_number = loop.index %}
+
+
+            <div class="quiz-card">
+
+
+                <!-- 문제 번호 -->
+
+                <div class="question-number">
+
+                    문제 {{ question_number }}
+
+                </div>
+
+
+                <!-- 문제 -->
+
+                <div class="question-text">
+
+                    {{ question.question }}
+
+                </div>
+
+
+                <!-- 보기 -->
+
+                {% for option in question.options %}
+
+                <label class="option">
+
+                    <input
+                        type="radio"
+                        name="question{{ question_number }}"
+                        value="{{ loop.index }}"
+                        required
+                    >
+
+                    {{ option }}
+
+                </label>
+
+                {% endfor %}
+
+
+                <!-- 정답 -->
+
+                <input
+                    type="hidden"
+                    name="answer{{ question_number }}"
+                    value="{{ question.answer }}"
+                >
+
+
+            </div>
+
+            {% endfor %}
+
+
+            <!-- 제출 -->
+
+            <button
+                type="submit"
+                class="submit-button"
+            >
+
+                📝 정답 확인
+
+            </button>
+
+
+        </form>
+
+
+        <!-- 결과 -->
+
+        <div
+            id="result"
+            class="result"
+            style="display: none;"
+        >
+
+            <h2>
+                퀴즈 결과
+            </h2>
+
+            <div
+                id="score"
+                class="score"
+            ></div>
+
+        </div>
+
+
+        {% endif %}
+
+
+        <!-- =========================
+             홈
+        ========================= -->
+
+        <a
+            href="/"
+            class="back"
+        >
+
+            ← 홈으로 돌아가기
+
+        </a>
+
+
+    </div>
+
+
+    <script>
+
+        // 과목을 선택하면
+        // 선택한 과목의 퀴즈 페이지로 이동
+
+        function changeSubject(subject) {
+
+            if (subject === "") {
+
+                window.location.href = "/quiz";
+
+                return;
+            }
+
+
+            window.location.href =
+                "/quiz?subject="
+                + encodeURIComponent(subject);
+
+        }
+
+
+        // =========================
+        // 퀴즈 정답 확인
+        // =========================
+
+        const quizForm =
+            document.getElementById("quiz-form");
+
+
+        if (quizForm) {
+
+            quizForm.addEventListener(
+                "submit",
+                function(event) {
+
+                    event.preventDefault();
+
+
+                    const total =
+                        document.querySelectorAll(
+                            ".quiz-card"
+                        ).length;
+
+
+                    let score = 0;
+
+
+                    for (
+                        let i = 1;
+                        i <= total;
+                        i++
+                    ) {
+
+                        const selected =
+                            document.querySelector(
+                                'input[name="question'
+                                + i
+                                + '"]:checked'
+                            );
+
+
+                        const answer =
+                            document.querySelector(
+                                'input[name="answer'
+                                + i
+                                + '"]'
+                            );
+
+
+                        if (
+                            selected &&
+                            answer &&
+                            selected.value === answer.value
+                        ) {
+
+                            score++;
+
+                        }
+
+                    }
+
+
+                    const result =
+                        document.getElementById(
+                            "result"
+                        );
+
+
+                    const scoreElement =
+                        document.getElementById(
+                            "score"
+                        );
+
+
+                    result.style.display =
+                        "block";
+
+
+                    scoreElement.textContent =
+                        score
+                        + " / "
+                        + total
+                        + " 정답";
+
+
+                    result.scrollIntoView({
+                        behavior: "smooth"
+                    });
+
+                }
+            );
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

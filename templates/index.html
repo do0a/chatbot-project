@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI 오답 노트 챗봇</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fb;
+            color: #222;
+        }
+
+        .container {
+            width: 800px;
+            margin: 80px auto;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .menu a {
+            display: block;
+            padding: 30px;
+            background-color: white;
+            border-radius: 15px;
+            text-decoration: none;
+            color: #222;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: 0.2s;
+        }
+
+        .menu a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 18px rgba(0, 0, 0, 0.12);
+        }
+
+        .icon {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🤖 AI 오답 노트 챗봇</h1>
+
+        <p class="description">
+            공부하다 모르는 내용을 AI에게 질문하고<br>
+            중요한 내용을 오답 노트에 저장해보세요.
+        </p>
+
+        <div class="menu">
+
+            <!-- 질문하기 -->
+            <a href="/question">
+                <span class="icon">💬</span>
+                질문하기
+            </a>
+
+            <!-- 오답 노트 -->
+            <a href="/notes">
+                <span class="icon">📖</span>
+                오답 노트
+            </a>
+
+            <!-- 퀴즈 -->
+            <a href="/quiz">
+                <span class="icon">📝</span>
+                퀴즈 풀기
+            </a>
+
+            <!-- 과목 관리 -->
+            <a href="/subjects">
+                <span class="icon">📚</span>
+                과목 관리
+            </a>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>과목 관리</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fb;
+            color: #222;
+        }
+
+        .container {
+            width: 700px;
+            max-width: 92%;
+            margin: 50px auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            margin: 0 0 10px;
+            font-size: 30px;
+        }
+
+        .header p {
+            margin: 0;
+            color: #777;
+        }
+
+        .subject-box {
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .subject-list {
+            margin-bottom: 25px;
+        }
+
+        .subject-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 15px 18px;
+            margin-bottom: 10px;
+
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+        }
+
+        .subject-name {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .delete-button {
+            border: none;
+            border-radius: 7px;
+
+            padding: 8px 12px;
+
+            background-color: #f3f4f6;
+            color: #666;
+
+            cursor: pointer;
+        }
+
+        .delete-button:hover {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+
+        .add-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .add-form input {
+            flex: 1;
+
+            padding: 13px;
+
+            border: 1px solid #ddd;
+            border-radius: 9px;
+
+            font-size: 15px;
+            outline: none;
+        }
+
+        .add-form input:focus {
+            border-color: #4f6df5;
+        }
+
+        .add-button {
+            padding: 13px 20px;
+
+            border: none;
+            border-radius: 9px;
+
+            background-color: #4f6df5;
+            color: white;
+
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .add-button:hover {
+            background-color: #3d59d8;
+        }
+
+        .empty {
+            text-align: center;
+            color: #888;
+            padding: 25px;
+        }
+
+        .back {
+            display: block;
+            width: fit-content;
+
+            margin: 30px auto 0;
+
+            padding: 10px 18px;
+
+            border-radius: 9px;
+
+            background-color: white;
+            color: #666;
+
+            text-decoration: none;
+
+            border: 1px solid #e5e7eb;
+        }
+
+        .back:hover {
+            color: #4f6df5;
+            border-color: #4f6df5;
+        }
+
+        @media (max-width: 600px) {
+            .add-form {
+                flex-direction: column;
+            }
+
+            .add-button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="header">
+
+            <h1>📚 과목 관리</h1>
+
+            <p>
+                공부할 과목을 추가하거나 삭제할 수 있습니다.
+            </p>
+
+        </div>
+
+
+        <div class="subject-box">
+
+            <!-- 과목 목록 -->
+            <div class="subject-list">
+
+                {% if subjects %}
+
+                    {% for subject in subjects %}
+
+                    <div class="subject-item">
+
+                        <div class="subject-name">
+                            📘 {{ subject }}
+                        </div>
+
+                        <form
+                            method="POST"
+                            action="/subjects/delete"
+                        >
+
+                            <input
+                                type="hidden"
+                                name="subject"
+                                value="{{ subject }}"
+                            >
+
+                            <button
+                                type="submit"
+                                class="delete-button"
+                            >
+                                삭제
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="empty">
+                        등록된 과목이 없습니다.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- 과목 추가 -->
+            <form
+                method="POST"
+                action="/subjects/add"
+                class="add-form"
+            >
+
+                <input
+                    type="text"
+                    name="subject"
+                    placeholder="새 과목 이름을 입력하세요"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="add-button"
+                >
+                    + 과목 추가
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- 홈 -->
+        <a
+            href="/"
+            class="back"
+        >
+            ← 홈으로 돌아가기
+        </a>
+
+    </div>
+
+</body>
+</html>
