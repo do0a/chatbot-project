@@ -1,9 +1,21 @@
+import os
 from openai import OpenAI
 
 
 # API 키 읽기
-with open("mykey.txt", "r", encoding="utf-8") as f:
-    api_key = f.read().strip()
+# Render에서는 환경변수 사용
+api_key = os.getenv("FACTCHAT_API_KEY")
+
+# 로컬 실행에서는 기존 mykey.txt 사용
+if not api_key:
+    try:
+        with open("mykey.txt", "r", encoding="utf-8") as f:
+            api_key = f.read().strip()
+    except FileNotFoundError:
+        raise RuntimeError(
+            "API 키를 찾을 수 없습니다. "
+            "FACTCHAT_API_KEY 환경변수 또는 mykey.txt 파일을 확인해주세요."
+        )
 
 
 # Mindlogic API 연결
