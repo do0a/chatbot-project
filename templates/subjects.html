@@ -1,268 +1,934 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!DOCTYPE html>
+    <html lang="ko">
 
-    <title>과목 관리</title>
+    <head>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+        <meta charset="UTF-8">
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f5f7fb;
-            color: #222;
-        }
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        >
 
-        .container {
-            width: 700px;
-            max-width: 92%;
-            margin: 50px auto;
-        }
+        <title>과목 관리 | AI 오답 노트</title>
 
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
 
-        .header h1 {
-            margin: 0 0 10px;
-            font-size: 30px;
-        }
+        <style>
 
-        .header p {
-            margin: 0;
-            color: #777;
-        }
-
-        .subject-box {
-            background-color: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        .subject-list {
-            margin-bottom: 25px;
-        }
-
-        .subject-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            padding: 15px 18px;
-            margin-bottom: 10px;
-
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-        }
-
-        .subject-name {
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .delete-button {
-            border: none;
-            border-radius: 7px;
-
-            padding: 8px 12px;
-
-            background-color: #f3f4f6;
-            color: #666;
-
-            cursor: pointer;
-        }
-
-        .delete-button:hover {
-            background-color: #fee2e2;
-            color: #dc2626;
-        }
-
-        .add-form {
-            display: flex;
-            gap: 10px;
-        }
-
-        .add-form input {
-            flex: 1;
-
-            padding: 13px;
-
-            border: 1px solid #ddd;
-            border-radius: 9px;
-
-            font-size: 15px;
-            outline: none;
-        }
-
-        .add-form input:focus {
-            border-color: #4f6df5;
-        }
-
-        .add-button {
-            padding: 13px 20px;
-
-            border: none;
-            border-radius: 9px;
-
-            background-color: #4f6df5;
-            color: white;
-
-            cursor: pointer;
-            font-size: 15px;
-        }
-
-        .add-button:hover {
-            background-color: #3d59d8;
-        }
-
-        .empty {
-            text-align: center;
-            color: #888;
-            padding: 25px;
-        }
-
-        .back {
-            display: block;
-            width: fit-content;
-
-            margin: 30px auto 0;
-
-            padding: 10px 18px;
-
-            border-radius: 9px;
-
-            background-color: white;
-            color: #666;
-
-            text-decoration: none;
-
-            border: 1px solid #e5e7eb;
-        }
-
-        .back:hover {
-            color: #4f6df5;
-            border-color: #4f6df5;
-        }
-
-        @media (max-width: 600px) {
-            .add-form {
-                flex-direction: column;
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
             }
+
+
+            body {
+                font-family:
+                    Arial,
+                    "Noto Sans KR",
+                    sans-serif;
+
+                background: #f7f8fc;
+                color: #1f2937;
+            }
+
+
+            .app {
+                min-height: 100vh;
+                display: flex;
+            }
+
+
+            /* =====================================
+            사이드바
+            ===================================== */
+
+            .sidebar {
+                width: 240px;
+                min-height: 100vh;
+
+                background: white;
+
+                border-right:
+                    1px solid #e8eaf0;
+
+                padding:
+                    28px 18px;
+
+                display: flex;
+                flex-direction: column;
+
+                position: fixed;
+
+                left: 0;
+                top: 0;
+                bottom: 0;
+            }
+
+
+            .logo {
+                padding:
+                    0 10px 28px;
+
+                border-bottom:
+                    1px solid #eeeef3;
+            }
+
+
+            .logo-title {
+                display: flex;
+                align-items: center;
+
+                gap: 10px;
+
+                font-size: 19px;
+                font-weight: 700;
+
+                color: #111827;
+            }
+
+
+            .logo-icon {
+                width: 36px;
+                height: 36px;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                background: #4f6df5;
+                color: white;
+
+                border-radius: 11px;
+
+                font-size: 15px;
+                font-weight: 700;
+            }
+
+
+            .logo p {
+                margin-top: 7px;
+                margin-left: 46px;
+
+                font-size: 12px;
+
+                color: #9ca3af;
+            }
+
+
+            .menu {
+                margin-top: 28px;
+
+                display: flex;
+                flex-direction: column;
+
+                gap: 7px;
+            }
+
+
+            .menu-title {
+                padding:
+                    0 12px 8px;
+
+                font-size: 11px;
+                font-weight: 700;
+
+                color: #a0a5b1;
+
+                letter-spacing: 1px;
+            }
+
+
+            .menu a {
+                display: flex;
+                align-items: center;
+
+                gap: 13px;
+
+                padding:
+                    12px 14px;
+
+                border-radius: 10px;
+
+                text-decoration: none;
+
+                color: #646b79;
+
+                font-size: 14px;
+                font-weight: 500;
+
+                transition: 0.2s;
+            }
+
+
+            .menu a:hover {
+                background: #f3f5ff;
+                color: #4f6df5;
+            }
+
+
+            .menu a.active {
+                background: #eef1ff;
+
+                color: #4f6df5;
+
+                font-weight: 700;
+            }
+
+
+            .menu-icon {
+                width: 22px;
+
+                text-align: center;
+
+                font-size: 17px;
+            }
+
+
+            .sidebar-bottom {
+                margin-top: auto;
+
+                padding:
+                    18px 12px 5px;
+
+                border-top:
+                    1px solid #eeeef3;
+
+                font-size: 12px;
+
+                color: #a0a5b1;
+
+                line-height: 1.6;
+            }
+
+
+            /* =====================================
+            메인 영역
+            ===================================== */
+
+            .main {
+                flex: 1;
+
+                margin-left: 240px;
+
+                min-height: 100vh;
+
+                padding:
+                    42px 50px;
+            }
+
+
+            .content {
+                max-width: 1120px;
+
+                margin: 0 auto;
+            }
+
+
+            /* =====================================
+            상단 제목
+            ===================================== */
+
+            .header {
+                margin-bottom: 25px;
+            }
+
+
+            .header-label {
+                font-size: 12px;
+                font-weight: 700;
+
+                color: #4f6df5;
+
+                letter-spacing: 0.7px;
+
+                margin-bottom: 7px;
+            }
+
+
+            .header h1 {
+                margin: 0 0 8px;
+
+                font-size: 27px;
+
+                color: #111827;
+            }
+
+
+            .header p {
+                margin: 0;
+
+                font-size: 13px;
+
+                color: #8b91a0;
+
+                line-height: 1.6;
+            }
+
+
+            /* =====================================
+            과목 관리 카드
+            ===================================== */
+
+            .subject-box {
+                background: white;
+
+                padding: 27px;
+
+                border:
+                    1px solid #e7e9ef;
+
+                border-radius: 16px;
+
+                box-shadow:
+                    0 5px 18px
+                    rgba(38, 46, 80, 0.04);
+            }
+
+
+            /* =====================================
+            과목 목록
+            ===================================== */
+
+            .section-title {
+                margin-bottom: 14px;
+
+                font-size: 12px;
+                font-weight: 700;
+
+                color: #9298a5;
+
+                letter-spacing: 0.5px;
+            }
+
+
+            .subject-list {
+                margin-bottom: 28px;
+            }
+
+
+            .subject-item {
+                display: flex;
+
+                align-items: center;
+                justify-content: space-between;
+
+                padding:
+                    15px 17px;
+
+                margin-bottom: 10px;
+
+                background: #fafbfc;
+
+                border:
+                    1px solid #e5e7eb;
+
+                border-radius: 11px;
+
+                transition: 0.2s;
+            }
+
+
+            .subject-item:hover {
+                border-color: #d6daf0;
+
+                background: #f8f9ff;
+            }
+
+
+            .subject-name {
+                display: flex;
+                align-items: center;
+
+                gap: 9px;
+
+                font-size: 14px;
+                font-weight: 700;
+
+                color: #343946;
+            }
+
+
+            .subject-icon {
+                font-size: 17px;
+            }
+
+
+            /* =====================================
+            삭제 버튼
+            ===================================== */
+
+            .delete-button {
+                border: none;
+
+                border-radius: 8px;
+
+                padding:
+                    8px 12px;
+
+                background: #f1f2f5;
+
+                color: #747986;
+
+                cursor: pointer;
+
+                font-size: 12px;
+                font-weight: 600;
+
+                transition: 0.2s;
+            }
+
+
+            .delete-button:hover {
+                background: #feecec;
+
+                color: #dc4545;
+            }
+
+
+            /* =====================================
+            과목 없음
+            ===================================== */
+
+            .empty {
+                text-align: center;
+
+                color: #999faa;
+
+                padding:
+                    35px 20px;
+
+                background: #fafbfc;
+
+                border:
+                    1px dashed #dfe2e9;
+
+                border-radius: 11px;
+
+                font-size: 13px;
+
+                line-height: 1.7;
+            }
+
+
+            /* =====================================
+            구분선
+            ===================================== */
+
+            .divider {
+                height: 1px;
+
+                background: #eceef3;
+
+                margin:
+                    3px 0 25px;
+            }
+
+
+            /* =====================================
+            과목 추가
+            ===================================== */
+
+            .add-title {
+                margin-bottom: 12px;
+
+                font-size: 12px;
+                font-weight: 700;
+
+                color: #9298a5;
+
+                letter-spacing: 0.5px;
+            }
+
+
+            .add-form {
+                display: flex;
+
+                gap: 10px;
+            }
+
+
+            .add-form input {
+                flex: 1;
+
+                min-width: 0;
+
+                padding:
+                    13px 14px;
+
+                border:
+                    1px solid #dfe2e9;
+
+                border-radius: 9px;
+
+                background: white;
+
+                color: #333;
+
+                font-size: 14px;
+
+                outline: none;
+
+                transition: 0.2s;
+            }
+
+
+            .add-form input::placeholder {
+                color: #a8adb7;
+            }
+
+
+            .add-form input:focus {
+                border-color: #4f6df5;
+
+                box-shadow:
+                    0 0 0 3px
+                    rgba(79, 109, 245, 0.08);
+            }
+
 
             .add-button {
-                width: 100%;
+                padding:
+                    13px 18px;
+
+                border: none;
+
+                border-radius: 9px;
+
+                background: #4f6df5;
+
+                color: white;
+
+                cursor: pointer;
+
+                font-size: 13px;
+                font-weight: 700;
+
+                white-space: nowrap;
+
+                transition: 0.2s;
             }
-        }
-    </style>
-</head>
-
-<body>
-
-    <div class="container">
-
-        <div class="header">
-
-            <h1>📚 과목 관리</h1>
-
-            <p>
-                공부할 과목을 추가하거나 삭제할 수 있습니다.
-            </p>
-
-        </div>
 
 
-        <div class="subject-box">
+            .add-button:hover {
+                background: #425fe0;
+            }
 
-            <!-- 과목 목록 -->
-            <div class="subject-list">
 
-                {% if subjects %}
+            /* =====================================
+            안내
+            ===================================== */
 
-                    {% for subject in subjects %}
+            .tip {
+                margin-top: 17px;
 
-                    <div class="subject-item">
+                padding:
+                    13px 15px;
 
-                        <div class="subject-name">
-                            📘 {{ subject }}
-                        </div>
+                background: #f6f7ff;
 
-                        <form
-                            method="POST"
-                            action="/subjects/delete"
-                        >
+                border-radius: 9px;
 
-                            <input
-                                type="hidden"
-                                name="subject"
-                                value="{{ subject }}"
-                            >
+                color: #7c8392;
 
-                            <button
-                                type="submit"
-                                class="delete-button"
-                            >
-                                삭제
-                            </button>
+                font-size: 12px;
 
-                        </form>
+                line-height: 1.6;
+            }
 
+
+            /* =====================================
+            반응형
+            ===================================== */
+
+            @media (max-width: 850px) {
+
+                .sidebar {
+                    width: 75px;
+
+                    padding:
+                        25px 10px;
+                }
+
+
+                .logo-title {
+                    justify-content: center;
+                }
+
+
+                .logo-title span:last-child,
+                .logo p,
+                .menu-title,
+                .menu-text,
+                .sidebar-bottom {
+                    display: none;
+                }
+
+
+                .menu a {
+                    justify-content: center;
+                }
+
+
+                .main {
+                    margin-left: 75px;
+
+                    padding:
+                        30px 22px;
+                }
+            }
+
+
+            @media (max-width: 600px) {
+
+                .sidebar {
+                    display: none;
+                }
+
+
+                .main {
+                    margin-left: 0;
+
+                    padding:
+                        25px 15px;
+                }
+
+
+                .subject-box {
+                    padding: 20px;
+                }
+
+
+                .add-form {
+                    flex-direction: column;
+                }
+
+
+                .add-button {
+                    width: 100%;
+                }
+            }
+
+        </style>
+
+    </head>
+
+
+    <body>
+
+
+    <div class="app">
+
+
+        <!-- =====================================
+            사이드바
+        ====================================== -->
+
+        <aside class="sidebar">
+
+
+            <div class="logo">
+
+
+                <div class="logo-title">
+
+
+                    <div class="logo-icon">
+                        AI
                     </div>
 
-                    {% endfor %}
 
-                {% else %}
+                    <span>
+                        오답 노트
+                    </span>
 
-                    <div class="empty">
-                        등록된 과목이 없습니다.
-                    </div>
 
-                {% endif %}
+                </div>
+
+
+                <p>
+                    Study Assistant
+                </p>
+
 
             </div>
 
 
-            <!-- 과목 추가 -->
-            <form
-                method="POST"
-                action="/subjects/add"
-                class="add-form"
-            >
+            <nav class="menu">
 
-                <input
-                    type="text"
-                    name="subject"
-                    placeholder="새 과목 이름을 입력하세요"
-                    required
+
+                <div class="menu-title">
+                    MENU
+                </div>
+
+
+                <a href="/">
+
+                    <span class="menu-icon">
+                        🏠
+                    </span>
+
+                    <span class="menu-text">
+                        홈
+                    </span>
+
+                </a>
+
+
+                <a href="/question">
+
+                    <span class="menu-icon">
+                        💬
+                    </span>
+
+                    <span class="menu-text">
+                        질문하기
+                    </span>
+
+                </a>
+
+
+                <a href="/notes">
+
+                    <span class="menu-icon">
+                        📖
+                    </span>
+
+                    <span class="menu-text">
+                        오답 노트
+                    </span>
+
+                </a>
+
+
+                <a href="/quiz">
+
+                    <span class="menu-icon">
+                        📝
+                    </span>
+
+                    <span class="menu-text">
+                        퀴즈 풀기
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="/subjects"
+                    class="active"
                 >
 
-                <button
-                    type="submit"
-                    class="add-button"
-                >
-                    + 과목 추가
-                </button>
+                    <span class="menu-icon">
+                        📚
+                    </span>
 
-            </form>
+                    <span class="menu-text">
+                        과목 관리
+                    </span>
 
-        </div>
+                </a>
 
 
-        <!-- 홈 -->
-        <a
-            href="/"
-            class="back"
-        >
-            ← 홈으로 돌아가기
-        </a>
+            <form method="post" action="{{ url_for('logout') }}" style="margin:16px 10px;">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<button type="submit" style="width:100%;padding:11px;border:1px solid #e3e5ec;border-radius:9px;background:white;color:#626977;cursor:pointer;">로그아웃</button>
+</form>
+</nav>
+
+
+            <div class="sidebar-bottom">
+
+                AI 오답 노트 챗봇<br>
+
+                과목별로 학습 내용을<br>
+
+                관리해보세요.
+
+            </div>
+
+
+        </aside>
+
+
+        <!-- =====================================
+            메인
+        ====================================== -->
+
+        <main class="main">
+
+
+            <div class="content">
+
+
+                <!-- =================================
+                    제목
+                ================================== -->
+
+                <div class="header">
+
+
+                    <div class="header-label">
+                        SUBJECT MANAGEMENT
+                    </div>
+
+
+                    <h1>
+                        📚 과목 관리
+                    </h1>
+
+
+                    <p>
+                        공부할 과목을 추가하거나 삭제할 수 있습니다.
+                    </p>
+
+
+                </div>
+
+
+                <!-- =================================
+                    과목 관리 카드
+                ================================== -->
+
+                <div class="subject-box">
+
+
+                    <!-- 과목 목록 -->
+
+                    <div class="section-title">
+                        MY SUBJECTS
+                    </div>
+
+
+                    <div class="subject-list">
+
+
+                        {% if subjects %}
+
+
+                            {% for subject in subjects %}
+
+
+                            <div class="subject-item">
+
+
+                                <div class="subject-name">
+
+                                    <span class="subject-icon">
+                                        
+                                    </span>
+
+                                    <span>
+                                        {{ subject }}
+                                    </span>
+
+                                </div>
+
+
+                                <form
+                                    method="POST"
+                                    action="/subjects/delete"
+                                >
+
+
+                                    <input
+                                        type="hidden"
+                                        name="subject"
+                                        value="{{ subject }}"
+                                    >
+
+
+                                    <button
+                                        type="submit"
+                                        class="delete-button"
+                                    >
+                                        삭제
+                                    </button>
+
+
+                                </form>
+
+
+                            </div>
+
+
+                            {% endfor %}
+
+
+                        {% else %}
+
+
+                            <div class="empty">
+
+                                아직 등록된 과목이 없습니다.<br>
+
+                                아래에서 새로운 과목을 추가해보세요.
+
+                            </div>
+
+
+                        {% endif %}
+
+
+                    </div>
+
+
+                    <div class="divider"></div>
+
+
+                    <!-- 과목 추가 -->
+
+                    <div class="add-title">
+                        ADD SUBJECT
+                    </div>
+
+
+                    <form
+                        method="POST"
+                        action="/subjects/add"
+                        class="add-form"
+                    >
+
+
+                        <input
+                            type="text"
+                            name="subject"
+                            placeholder="새 과목 이름을 입력하세요"
+                            required
+                        >
+
+
+                        <button
+                            type="submit"
+                            class="add-button"
+                        >
+                            + 과목 추가
+                        </button>
+
+
+                    </form>
+
+
+                    <div class="tip">
+
+                        💡 추가한 과목은 질문하기와 오답 노트에서
+                        선택하여 사용할 수 있습니다.
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </main>
+
 
     </div>
 
-</body>
-</html>
+
+    </body>
+
+    </html>

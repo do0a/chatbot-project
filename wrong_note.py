@@ -1,86 +1,73 @@
-import os
+from database import connect, init_db, current_user_id
 
 
-# 오답 노트를 저장할 폴더
-NOTE_FOLDER = "notes"
+def _subject_id(conn, uid, subject):
+    row = conn.execute('SELECT id FROM subjects WHERE user_id=? AND name=?', (uid, subject)).fetchone()
+    return row['id'] if row else None
 
-
-# ==========================================
-# 오답 노트 폴더 만들기
-# ==========================================
-
-def create_note_folder():
-    if not os.path.exists(NOTE_FOLDER):
-        os.makedirs(NOTE_FOLDER)
-
-
-# ==========================================
-# 과목 이름을 파일 이름으로 사용
-# ==========================================
-
-def get_note_file(subject):
-    create_note_folder()
-
-    return os.path.join(
-        NOTE_FOLDER,
-        subject + ".txt"
-    )
-
-
-# ==========================================
-# 오답 노트 저장
-# ==========================================
 
 def save_note(subject, question, answer):
-    file_path = get_note_file(subject)
+    init_db()
+    uid = current_user_id()
+    with connect() as conn:
+        sid = _subject_id(conn, uid, subject)
+        if sid is None or not question.strip() or not answer.strip():
+            return False
+        conn.execute('INSERT INTO wrong_notes(subject_id,question,answer) VALUES (?,?,?)',
+                     (sid, question.strip(), answer.strip()))
+        return True
 
-    with open(file_path, "a", encoding="utf-8") as f:
-
-        f.write("\n")
-        f.write("========================================\n")
-        f.write("질문: " + question + "\n\n")
-        f.write("AI 답변:\n")
-        f.write(answer + "\n")
-        f.write("========================================\n")
-
-    return True
-
-
-# ==========================================
-# 오답 노트 불러오기
-# ==========================================
 
 def load_notes(subject):
-    file_path = get_note_file(subject)
+    init_db()
+    uid = current_user_id()
+    with connect() as conn:
+        rows = conn.execute('''SELECT n.question, n.answer FROM wrong_notes n
+            JOIN subjects s ON s.id=n.subject_id
+            WHERE s.user_id=? AND s.name=? ORDER BY n.id''', (uid, subject)).fetchall()
+        return [{'question': row['question'], 'answer': row['answer']} for row in rows]
 
-    if not os.path.exists(file_path):
-        return []
 
-    with open(file_path, "r", encoding="utf-8") as f:
-        content = f.read()
+def rewrite_notes(subject, notes):
+    init_db()
+    uid = current_user_id()
+    with connect() as conn:
+        sid = _subject_id(conn, uid, subject)
+        if sid is None:
+            return False
+        conn.execute('DELETE FROM wrong_notes WHERE subject_id=?', (sid,))
+        for note in notes:
+            conn.execute('INSERT INTO wrong_notes(subject_id,question,answer) VALUES (?,?,?)',
+                         (sid, note['question'].strip(), note['answer'].strip()))
+        return True
 
-    notes = []
 
-    sections = content.split("========================================")
+def _note_id(conn, uid, subject, index):
+    if not isinstance(index, int) or index < 0:
+        return None
+    rows = conn.execute('''SELECT n.id FROM wrong_notes n JOIN subjects s ON s.id=n.subject_id
+        WHERE s.user_id=? AND s.name=? ORDER BY n.id''', (uid, subject)).fetchall()
+    return rows[index]['id'] if index < len(rows) else None
 
-    for section in sections:
-        section = section.strip()
 
-        if not section:
-            continue
+def update_note(subject, index, question, answer):
+    init_db()
+    uid = current_user_id()
+    with connect() as conn:
+        nid = _note_id(conn, uid, subject, index)
+        if nid is None or not question.strip() or not answer.strip():
+            return False
+        conn.execute('UPDATE wrong_notes SET question=?, answer=? WHERE id=?',
+                     (question.strip(), answer.strip(), nid))
+        return True
 
-        question = ""
-        answer = ""
 
-        if "질문:" in section and "AI 답변:" in section:
-            question_part, answer_part = section.split("AI 답변:", 1)
-
-            question = question_part.replace("질문:", "").strip()
-            answer = answer_part.strip()
-
-            notes.append({
-                "question": question,
-                "answer": answer
-            })
-
-    return notes
+def delete_note(subject, index):
+    init_db()
+    uid = current_user_id()
+    with connect() as conn:
+        nid = _note_id(conn, uid, subject, index)
+        if nid is None:
+            return False
+        conn.execute('DELETE FROM wrong_notes WHERE id=?', (nid,))
+        return True

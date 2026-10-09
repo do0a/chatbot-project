@@ -1,232 +1,845 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>AI에게 질문하기</title>
+    <title>질문하기 | AI 오답 노트</title>
 
     <style>
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f5f7fb;
-            color: #222;
+            font-family: Arial, "Noto Sans KR", sans-serif;
+            background: #f7f8fc;
+            color: #1f2937;
         }
 
-        .chat-container {
-            width: 800px;
-            max-width: 94%;
-            height: 90vh;
-            margin: 30px auto;
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        .app {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* =========================
+           사이드바
+        ========================= */
+
+        .sidebar {
+            width: 240px;
+            min-height: 100vh;
+            background: #ffffff;
+            border-right: 1px solid #e8eaf0;
+            padding: 28px 18px;
 
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
         }
 
-        /* 상단 */
-        .header {
-            padding: 20px;
-            border-bottom: 1px solid #eee;
-            text-align: center;
+        .logo {
+            padding: 0 10px 28px;
+            border-bottom: 1px solid #eeeef3;
         }
 
-        .header h1 {
-            margin: 0;
-            font-size: 22px;
-        }
-
-        .header p {
-            margin: 7px 0 0;
-            color: #777;
-            font-size: 14px;
-        }
-
-        /* 채팅 영역 */
-        .chat-box {
-            flex: 1;
-            padding: 25px;
-            overflow-y: auto;
-        }
-
-        /* 메시지 */
-        .message {
+        .logo-title {
             display: flex;
-            margin-bottom: 20px;
-        }
-
-        .message.ai {
-            justify-content: flex-start;
-        }
-
-        .message.user {
-            justify-content: flex-end;
-        }
-
-        .bubble {
-            max-width: 70%;
-            padding: 13px 17px;
-            border-radius: 15px;
-            line-height: 1.5;
-            white-space: pre-wrap;
-        }
-
-        /* AI 말풍선 */
-        .ai .bubble {
-            background-color: #f0f2f7;
-        }
-
-        /* 사용자 말풍선 */
-        .user .bubble {
-            background-color: #4f6df5;
-            color: white;
-        }
-
-        /* 오답 노트 저장 버튼 */
-        .save-form {
-            margin: -5px 0 20px 0;
-        }
-
-        .save-button {
-            padding: 10px 16px;
-            border: none;
-            border-radius: 8px;
-
-            background-color: #f1f3f8;
-            color: #444;
-
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .save-button:hover {
-            background-color: #e2e5ed;
-        }
-
-        /* 저장 완료 메시지 */
-        .saved-message {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 10px 15px;
-
-            background-color: #eef8ee;
-            color: #357a38;
-
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        /* 입력 영역 */
-        .input-area {
-            padding: 15px;
-            border-top: 1px solid #eee;
-        }
-
-        /* 과목 선택 */
-        .subject-select {
-            width: 100%;
-            padding: 11px;
-
-            border: 1px solid #ddd;
-            border-radius: 10px;
-
-            background-color: white;
-            font-size: 14px;
-
-            outline: none;
-            margin-bottom: 10px;
-        }
-
-        .subject-select:focus {
-            border-color: #4f6df5;
-        }
-
-        /* 질문 입력 */
-        .input-box {
-            display: flex;
+            align-items: center;
             gap: 10px;
+
+            font-size: 19px;
+            font-weight: 700;
+            color: #111827;
         }
 
-        .input-box textarea {
-            flex: 1;
-            height: 50px;
-            resize: none;
+        .logo-icon {
+            width: 36px;
+            height: 36px;
 
-            border: 1px solid #ddd;
-            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-            padding: 14px;
-            font-size: 15px;
-            outline: none;
-        }
-
-        .input-box textarea:focus {
-            border-color: #4f6df5;
-        }
-
-        /* 전송 버튼 */
-        .send-button {
-            width: 80px;
-            border: none;
-            border-radius: 12px;
-
-            background-color: #4f6df5;
+            background: #4f6df5;
             color: white;
 
+            border-radius: 11px;
             font-size: 15px;
-            cursor: pointer;
+            font-weight: 700;
         }
 
-        .send-button:hover {
-            background-color: #3d59d8;
+        .logo p {
+            margin-top: 7px;
+            margin-left: 46px;
+
+            font-size: 12px;
+            color: #9ca3af;
         }
 
-        /* 홈 */
-        .bottom {
-            text-align: center;
-            padding: 10px;
+        .menu {
+            margin-top: 28px;
+
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
         }
 
-        .bottom a {
-            color: #777;
+        .menu-title {
+            padding: 0 12px 8px;
+
+            font-size: 11px;
+            font-weight: 700;
+
+            color: #a0a5b1;
+            letter-spacing: 1px;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+
+            padding: 12px 14px;
+
+            border-radius: 10px;
             text-decoration: none;
+
+            color: #646b79;
+
             font-size: 14px;
+            font-weight: 500;
+
+            transition: 0.2s;
         }
 
-        .bottom a:hover {
+        .menu a:hover {
+            background: #f3f5ff;
             color: #4f6df5;
         }
 
-        /* 모바일 */
+        .menu a.active {
+            background: #eef1ff;
+            color: #4f6df5;
+            font-weight: 700;
+        }
+
+        .menu-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+
+            padding: 18px 12px 5px;
+
+            border-top: 1px solid #eeeef3;
+
+            font-size: 12px;
+            color: #a0a5b1;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           메인
+           퀴즈 풀기와 동일
+        ========================= */
+
+        .main {
+            flex: 1;
+
+            margin-left: 240px;
+
+            min-width: 0;
+            min-height: 100vh;
+
+            padding: 42px 50px;
+        }
+
+        .chat-page {
+            width: 100%;
+            max-width: 1120px;
+
+            margin: 0 auto;
+
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* =========================
+           페이지 상단
+           퀴즈 풀기와 동일
+        ========================= */
+
+        .page-header {
+            margin-bottom: 27px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-label {
+            color: #4f6df5;
+
+            font-size: 12px;
+            font-weight: 700;
+
+            margin-bottom: 7px;
+
+            letter-spacing: 0.6px;
+        }
+
+        .page-header h1 {
+            font-size: 27px;
+
+            color: #111827;
+
+            margin-bottom: 7px;
+        }
+
+        .page-header p {
+            color: #8b91a0;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+        .note-link {
+            padding: 10px 15px;
+
+            background: white;
+
+            border: 1px solid #e3e5ec;
+            border-radius: 9px;
+
+            color: #626977;
+
+            text-decoration: none;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            transition: 0.2s;
+        }
+
+        .note-link:hover {
+            border-color: #cdd3f7;
+            color: #4f6df5;
+        }
+
+        /* =========================
+           채팅 패널
+        ========================= */
+
+        .chat-panel {
+            background: white;
+
+            border: 1px solid #e7e9ef;
+            border-radius: 18px;
+
+            box-shadow: 0 8px 30px rgba(38, 46, 80, 0.06);
+
+            min-height: calc(100vh - 150px);
+
+            display: flex;
+            flex-direction: column;
+
+            overflow: hidden;
+        }
+
+        .chat-top {
+            padding: 15px 22px;
+
+            border-bottom: 1px solid #eff0f4;
+
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+
+            background: #44bd7b;
+            border-radius: 50%;
+        }
+
+        .chat-top strong {
+            font-size: 13px;
+            color: #4b5260;
+        }
+
+        .chat-top span {
+            font-size: 12px;
+            color: #a1a6b2;
+        }
+
+        /* =========================
+           대화 영역
+        ========================= */
+
+        .chat-content {
+            flex: 1;
+
+            padding: 32px 40px;
+
+            overflow-y: auto;
+        }
+
+        /* 처음 들어왔을 때 */
+
+        .welcome-message {
+            max-width: 620px;
+
+            margin: 70px auto;
+
+            text-align: center;
+        }
+
+        .welcome-ai-icon {
+            width: 55px;
+            height: 55px;
+
+            margin: 0 auto 18px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 16px;
+
+            background: #eef1ff;
+
+            color: #4f6df5;
+
+            font-weight: 700;
+            font-size: 17px;
+        }
+
+        .welcome-message h2 {
+            font-size: 20px;
+
+            margin-bottom: 9px;
+
+            color: #303643;
+        }
+
+        .welcome-message p {
+            font-size: 14px;
+
+            color: #8a909e;
+
+            line-height: 1.7;
+        }
+
+        /* =========================
+           사용자 질문
+        ========================= */
+
+        .user-row {
+            width: 100%;
+
+            display: flex;
+            justify-content: flex-end;
+
+            margin-bottom: 28px;
+        }
+
+        .user-message {
+            max-width: 62%;
+
+            padding: 12px 17px;
+
+            background: #4f6df5;
+            color: white;
+
+            border-radius: 16px 16px 4px 16px;
+
+            font-size: 15px;
+            line-height: 1.6;
+
+            overflow-wrap: break-word;
+
+            box-shadow: 0 4px 12px rgba(79, 109, 245, 0.14);
+        }
+
+        /* =========================
+           AI 답변
+        ========================= */
+
+        .ai-row {
+            width: 100%;
+
+            display: flex;
+            gap: 14px;
+
+            margin-bottom: 18px;
+        }
+
+        .ai-avatar {
+            width: 37px;
+            height: 37px;
+
+            flex-shrink: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 11px;
+
+            background: #eef1ff;
+
+            color: #4f6df5;
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .ai-content {
+            flex: 1;
+            min-width: 0;
+
+            padding-top: 3px;
+        }
+
+        .ai-name {
+            font-size: 12px;
+            font-weight: 700;
+
+            color: #5d6472;
+
+            margin-bottom: 10px;
+        }
+
+        .ai-answer {
+            width: 100%;
+
+            padding: 20px 23px;
+
+            background: #f7f8fb;
+
+            border: 1px solid #eceef3;
+            border-radius: 14px;
+
+            color: #303643;
+
+            overflow-wrap: break-word;
+        }
+
+        /* =========================
+           Markdown
+        ========================= */
+
+        .markdown-body {
+            font-size: 14px;
+            line-height: 1.75;
+        }
+
+        .markdown-body p {
+            margin: 8px 0;
+        }
+
+        .markdown-body p:first-child {
+            margin-top: 0;
+        }
+
+        .markdown-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        .markdown-body h1 {
+            font-size: 21px;
+            margin: 20px 0 10px;
+        }
+
+        .markdown-body h2 {
+            font-size: 18px;
+            margin: 18px 0 9px;
+        }
+
+        .markdown-body h3 {
+            font-size: 16px;
+            margin: 16px 0 8px;
+        }
+
+        .markdown-body h1:first-child,
+        .markdown-body h2:first-child,
+        .markdown-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .markdown-body ul,
+        .markdown-body ol {
+            padding-left: 24px;
+            margin: 10px 0;
+        }
+
+        .markdown-body li {
+            margin: 5px 0;
+        }
+
+        .markdown-body strong {
+            font-weight: 700;
+            color: #252a35;
+        }
+
+        .markdown-body code {
+            font-family: Consolas, Monaco, monospace;
+
+            background: #e9ebf1;
+
+            padding: 2px 5px;
+
+            border-radius: 4px;
+
+            font-size: 13px;
+        }
+
+        .markdown-body pre {
+            background: #20232a;
+
+            padding: 16px 18px;
+
+            border-radius: 10px;
+
+            overflow-x: auto;
+
+            margin: 14px 0;
+        }
+
+        .markdown-body pre code {
+            background: none;
+            padding: 0;
+
+            color: #f3f4f6;
+
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .markdown-body table {
+            width: 100%;
+
+            border-collapse: collapse;
+
+            margin: 15px 0;
+
+            background: white;
+        }
+
+        .markdown-body th,
+        .markdown-body td {
+            border: 1px solid #dfe2e9;
+
+            padding: 9px 10px;
+
+            text-align: left;
+        }
+
+        .markdown-body th {
+            background: #f0f2f7;
+        }
+
+        .markdown-body blockquote {
+            margin: 14px 0;
+
+            padding: 9px 13px;
+
+            border-left: 4px solid #4f6df5;
+
+            background: #eef1ff;
+
+            color: #5f6674;
+        }
+
+        /* =========================
+           오답 노트 저장
+        ========================= */
+
+        .save-area {
+            margin-left: 51px;
+            margin-bottom: 30px;
+
+            padding: 15px 17px;
+
+            border: 1px solid #e8eaf0;
+            border-radius: 12px;
+
+            background: #ffffff;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 15px;
+        }
+
+        .save-description strong {
+            display: block;
+
+            font-size: 13px;
+            color: #4d5462;
+
+            margin-bottom: 4px;
+        }
+
+        .save-description span {
+            font-size: 12px;
+            color: #9a9fac;
+        }
+
+        .save-form {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            flex-shrink: 0;
+        }
+
+        .save-subject {
+            width: 185px;
+
+            padding: 10px 11px;
+
+            border: 1px solid #dfe2e9;
+            border-radius: 8px;
+
+            background: white;
+
+            color: #4e5563;
+
+            font-size: 13px;
+
+            outline: none;
+        }
+
+        .save-subject:focus {
+            border-color: #4f6df5;
+        }
+
+        .save-button {
+            padding: 10px 14px;
+
+            border: none;
+            border-radius: 8px;
+
+            background: #eef1ff;
+
+            color: #4f6df5;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .save-button:hover {
+            background: #e0e5ff;
+        }
+
+        /* =========================
+           질문 입력창
+        ========================= */
+
+        .input-area {
+            padding: 17px 22px 20px;
+
+            background: white;
+
+            border-top: 1px solid #eff0f4;
+        }
+
+        .question-form {
+            width: 100%;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: flex-end;
+
+            gap: 10px;
+
+            padding: 7px;
+
+            background: #f8f9fb;
+
+            border: 1px solid #e1e4eb;
+            border-radius: 13px;
+
+            transition: 0.2s;
+        }
+
+        .input-wrapper:focus-within {
+            background: white;
+            border-color: #b8c2f7;
+
+            box-shadow: 0 0 0 3px rgba(79, 109, 245, 0.07);
+        }
+
+        .input-wrapper textarea {
+            flex: 1;
+
+            height: 48px;
+            max-height: 130px;
+
+            resize: none;
+
+            border: none;
+            outline: none;
+
+            background: transparent;
+
+            padding: 13px 12px;
+
+            font-family: Arial, "Noto Sans KR", sans-serif;
+            font-size: 14px;
+
+            color: #343a46;
+        }
+
+        .input-wrapper textarea::placeholder {
+            color: #a5aab5;
+        }
+
+        .send-button {
+            width: 72px;
+            height: 44px;
+
+            border: none;
+            border-radius: 9px;
+
+            background: #4f6df5;
+
+            color: white;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .send-button:hover {
+            background: #425fe0;
+        }
+
+        .input-hint {
+            margin-top: 8px;
+
+            text-align: center;
+
+            font-size: 11px;
+            color: #b0b4bd;
+        }
+
+        /* =========================
+           반응형
+        ========================= */
+
+        @media (max-width: 850px) {
+            .sidebar {
+                width: 75px;
+                padding: 25px 10px;
+            }
+
+            .logo {
+                padding: 0 0 25px;
+            }
+
+            .logo-title {
+                justify-content: center;
+            }
+
+            .logo-title span:last-child,
+            .logo p,
+            .menu-title,
+            .menu-text,
+            .sidebar-bottom {
+                display: none;
+            }
+
+            .menu a {
+                justify-content: center;
+                padding: 13px;
+            }
+
+            .main {
+                margin-left: 75px;
+                padding: 30px 22px;
+            }
+
+            .chat-content {
+                padding: 25px 22px;
+            }
+
+            .save-area {
+                margin-left: 0;
+
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .save-form {
+                width: 100%;
+            }
+
+            .save-subject {
+                flex: 1;
+                width: auto;
+            }
+        }
+
         @media (max-width: 600px) {
-
-            .chat-container {
-                height: 94vh;
-                margin: 15px auto;
+            .sidebar {
+                display: none;
             }
 
-            .chat-box {
-                padding: 15px;
+            .main {
+                margin-left: 0;
+                padding: 25px 15px;
             }
 
-            .bubble {
+            .page-header {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .chat-content {
+                padding: 22px 15px;
+            }
+
+            .user-message {
                 max-width: 85%;
             }
 
-            .input-box textarea {
-                height: 48px;
+            .ai-avatar {
+                display: none;
             }
 
-            .send-button {
-                width: 65px;
+            .save-form {
+                flex-direction: column;
+            }
+
+            .save-subject,
+            .save-button {
+                width: 100%;
             }
         }
     </style>
@@ -234,190 +847,330 @@
 
 <body>
 
-    <div class="chat-container">
+<div class="app">
 
-        <!-- 상단 -->
-        <div class="header">
+    <!-- =========================
+         사이드바
+    ========================== -->
 
-            <h1>🤖 AI 오답 노트 챗봇</h1>
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-title">
+
+                <div class="logo-icon">
+                    AI
+                </div>
+
+                <span>
+                    오답 노트
+                </span>
+
+            </div>
 
             <p>
-                궁금한 내용을 자유롭게 질문해보세요.
+                Study Assistant
             </p>
 
         </div>
 
+        <nav class="menu">
 
-        <!-- 채팅 내용 -->
-        <div class="chat-box">
-
-            <!-- 처음 접속했을 때 -->
-            {% if not user_question %}
-
-            <div class="message ai">
-
-                <div class="bubble">
-                    안녕하세요! 👋
-
-                    공부하다 궁금한 내용을 질문해주세요.
-                </div>
-
+            <div class="menu-title">
+                MENU
             </div>
-
-            {% endif %}
-
-
-            <!-- 사용자 질문 -->
-            {% if user_question %}
-
-            <div class="message user">
-
-                <div class="bubble">
-                    {{ user_question }}
-                </div>
-
-            </div>
-
-            {% endif %}
-
-
-            <!-- AI 답변 -->
-            {% if answer %}
-
-            <div class="message ai">
-
-                <div class="bubble">
-                    {{ answer }}
-                </div>
-
-            </div>
-
-
-            <!-- 오답 노트 저장 -->
-            {% if not saved %}
-
-            <form
-                method="POST"
-                action="/question"
-                class="save-form"
-            >
-
-                <input
-                    type="hidden"
-                    name="question"
-                    value="{{ user_question }}"
-                >
-
-                <input
-                    type="hidden"
-                    name="answer"
-                    value="{{ answer }}"
-                >
-
-                <input
-                    type="hidden"
-                    name="subject"
-                    value="{{ selected_subject }}"
-                >
-
-                <input
-                    type="hidden"
-                    name="save"
-                    value="yes"
-                >
-
-                <button
-                    type="submit"
-                    class="save-button"
-                >
-                    📖 오답 노트에 저장
-                </button>
-
-            </form>
-
-            {% endif %}
-
-
-            <!-- 저장 완료 -->
-            {% if saved %}
-
-            <div class="saved-message">
-                ✅ 오답 노트에 저장되었습니다!
-            </div>
-
-            {% endif %}
-
-            {% endif %}
-
-        </div>
-
-
-        <!-- 질문 입력 -->
-        <div class="input-area">
-
-            <form
-                method="POST"
-                action="/question"
-            >
-
-                <!-- 과목 선택 -->
-                <select
-                    name="subject"
-                    class="subject-select"
-                    required
-                >
-
-                    <option value="">
-                        📚 과목을 선택하세요
-                    </option>
-
-                    {% for subject in subjects %}
-
-                    <option
-                        value="{{ subject }}"
-                        {% if subject == selected_subject %}selected{% endif %}
-                    >
-                        {{ subject }}
-                    </option>
-
-                    {% endfor %}
-
-                </select>
-
-
-                <!-- 질문 입력 -->
-                <div class="input-box">
-
-                    <textarea
-                        name="question"
-                        placeholder="질문을 입력하세요..."
-                        required
-                    ></textarea>
-
-                    <button
-                        type="submit"
-                        class="send-button"
-                    >
-                        전송
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
-
-
-        <!-- 홈으로 -->
-        <div class="bottom">
 
             <a href="/">
-                ← 홈으로 돌아가기
+                <span class="menu-icon">🏠</span>
+                <span class="menu-text">홈</span>
             </a>
+
+            <a href="/question" class="active">
+                <span class="menu-icon">💬</span>
+                <span class="menu-text">질문하기</span>
+            </a>
+
+            <a href="/notes">
+                <span class="menu-icon">📖</span>
+                <span class="menu-text">오답 노트</span>
+            </a>
+
+            <a href="/quiz">
+                <span class="menu-icon">📝</span>
+                <span class="menu-text">퀴즈 풀기</span>
+            </a>
+
+            <a href="/subjects">
+                <span class="menu-icon">📚</span>
+                <span class="menu-text">과목 관리</span>
+            </a>
+
+        <form method="post" action="{{ url_for('logout') }}" style="margin:16px 10px;">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<button type="submit" style="width:100%;padding:11px;border:1px solid #e3e5ec;border-radius:9px;background:white;color:#626977;cursor:pointer;">로그아웃</button>
+</form>
+</nav>
+
+        <div class="sidebar-bottom">
+            AI 오답 노트 챗봇<br>
+            질문하고 저장한 뒤<br>
+            다시 복습해보세요.
+        </div>
+
+    </aside>
+
+    <!-- =========================
+         메인
+    ========================== -->
+
+    <main class="main">
+
+        <div class="chat-page">
+
+            <!-- =========================
+                 페이지 제목
+                 퀴즈 풀기와 동일한 구조
+            ========================== -->
+
+            <div class="page-header">
+
+                <div>
+
+                    <div class="header-label">
+                        ASK AI
+                    </div>
+
+                    <h1>
+                        💬 질문하기
+                    </h1>
+
+                    <p>
+                        이해하기 어려운 개념이나 코드를 AI에게 질문해보세요.
+                    </p>
+
+                </div>
+
+                <a href="/notes" class="note-link">
+                    📖 오답 노트 보기
+                </a>
+
+            </div>
+
+            <!-- =========================
+                 채팅 패널
+            ========================== -->
+
+            <section class="chat-panel">
+
+                <div class="chat-top">
+
+                    <div class="status-dot"></div>
+
+                    <strong>
+                        AI 학습 도우미
+                    </strong>
+
+                    <span>
+                        질문에 답변할 준비가 되어 있습니다.
+                    </span>
+
+                </div>
+
+                <!-- 대화 -->
+
+                <div class="chat-content">
+
+                    <!-- 질문 전 화면 -->
+
+                    {% if not question %}
+
+                    <div class="welcome-message">
+
+                        <div class="welcome-ai-icon">
+                            AI
+                        </div>
+
+                        <h2>
+                            무엇이 궁금한가요?
+                        </h2>
+
+                        <p>
+                            프로그래밍 개념, 코드 오류,
+                            컴퓨터공학 관련 내용 등<br>
+                            공부하다 궁금한 내용을 자유롭게 질문해보세요.
+                        </p>
+
+                    </div>
+
+                    {% endif %}
+
+                    <!-- 사용자 질문 -->
+
+                    {% if question %}
+
+                    <div class="user-row">
+
+                        <div class="user-message">
+                            {{ question | trim }}
+                        </div>
+
+                    </div>
+
+                    {% endif %}
+
+                    <!-- AI 답변 -->
+
+                    {% if answer %}
+
+                    <div class="ai-row">
+
+                        <div class="ai-avatar">
+                            AI
+                        </div>
+
+                        <div class="ai-content">
+
+                            <div class="ai-name">
+                                AI 학습 도우미
+                            </div>
+
+                            <div class="ai-answer">
+
+                                <div class="markdown-body">
+                                    {{ answer_html | safe }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- 오답 노트 저장 -->
+
+                    <div class="save-area">
+
+                        <div class="save-description">
+
+                            <strong>
+                                이 답변이 도움이 되었나요?
+                            </strong>
+
+                            <span>
+                                필요한 내용이라면 과목을 선택해 오답 노트에 저장하세요.
+                            </span>
+
+                        </div>
+
+                        <form
+                            method="POST"
+                            action="/question"
+                            class="save-form"
+                        >
+
+                            <input
+                                type="hidden"
+                                name="action"
+                                value="save"
+                            >
+
+                            <input
+                                type="hidden"
+                                name="question"
+                                value="{{ question }}"
+                            >
+
+                            <textarea
+                                name="answer"
+                                style="display:none;"
+                            >{{ answer }}</textarea>
+
+                            <select
+                                name="subject"
+                                class="save-subject"
+                                required
+                            >
+
+                                <option value="">
+                                    저장할 과목 선택
+                                </option>
+
+                                {% for subject in subjects %}
+
+                                <option value="{{ subject }}">
+                                    {{ subject }}
+                                </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                            <button
+                                type="submit"
+                                class="save-button"
+                            >
+                                📖 저장하기
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+                <!-- =========================
+                     질문 입력
+                ========================== -->
+
+                <div class="input-area">
+
+                    <form
+                        method="POST"
+                        action="/question"
+                        class="question-form"
+                    >
+
+                        <input
+                            type="hidden"
+                            name="action"
+                            value="ask"
+                        >
+
+                        <div class="input-wrapper">
+
+                            <textarea
+                                name="question"
+                                placeholder="궁금한 내용을 입력하세요..."
+                                required
+                            ></textarea>
+
+                            <button
+                                type="submit"
+                                class="send-button"
+                            >
+                                전송
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                    <div class="input-hint">
+                        AI의 답변은 정확하지 않을 수 있으므로 중요한 내용은 다시 확인하세요.
+                    </div>
+
+                </div>
+
+            </section>
 
         </div>
 
-    </div>
+    </main>
+
+</div>
 
 </body>
 </html>

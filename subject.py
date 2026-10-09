@@ -1,58 +1,28 @@
-import os
+from database import connect, init_db, current_user_id
 
-
-# 과목을 저장할 파일
-SUBJECT_FILE = "subjects.txt"
-
-
-# ==========================================
-# 과목 목록 불러오기
-# ==========================================
 
 def load_subjects():
-    if not os.path.exists(SUBJECT_FILE):
-        return []
+    init_db()
+    uid = current_user_id()
+    with connect() as conn:
+        return [row['name'] for row in conn.execute(
+            'SELECT name FROM subjects WHERE user_id=? ORDER BY id', (uid,))]
 
-    with open(SUBJECT_FILE, "r", encoding="utf-8") as f:
-        subjects = [line.strip() for line in f if line.strip()]
-
-    return subjects
-
-
-# ==========================================
-# 과목 추가
-# ==========================================
 
 def add_subject(subject):
-    subjects = load_subjects()
-
-    # 이미 있는 과목인지 확인
-    if subject in subjects:
+    init_db()
+    uid = current_user_id()
+    subject = subject.strip()
+    if not subject or len(subject) > 100:
         return False
+    with connect() as conn:
+        cur = conn.execute('INSERT OR IGNORE INTO subjects(user_id,name) VALUES (?,?)', (uid, subject))
+        return cur.rowcount > 0
 
-    subjects.append(subject)
-
-    with open(SUBJECT_FILE, "w", encoding="utf-8") as f:
-        for item in subjects:
-            f.write(item + "\n")
-
-    return True
-
-
-# ==========================================
-# 과목 삭제
-# ==========================================
 
 def delete_subject(subject):
-    subjects = load_subjects()
-
-    if subject not in subjects:
-        return False
-
-    subjects.remove(subject)
-
-    with open(SUBJECT_FILE, "w", encoding="utf-8") as f:
-        for item in subjects:
-            f.write(item + "\n")
-
-    return True
+    init_db()
+    uid = current_user_id()
+    with connect() as conn:
+        cur = conn.execute('DELETE FROM subjects WHERE user_id=? AND name=?', (uid, subject))
+        return cur.rowcount > 0

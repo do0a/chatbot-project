@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+
+
+<head>
+
+
+    <meta charset="UTF-8">
+
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+
+    <title>
+        이해도 확인 | AI 오답 노트
+    </title>
+
+
+    <style>
+
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+            font-family:
+                Arial,
+                "Noto Sans KR",
+                sans-serif;
+
+            background: #f7f8fc;
+            color: #1f2937;
+        }
+
+
+        .app {
+            min-height: 100vh;
+            display: flex;
+        }
+
+
+        /* =====================================
+           사이드바
+        ===================================== */
+
+        .sidebar {
+            width: 240px;
+            min-height: 100vh;
+
+            background: white;
+
+            border-right:
+                1px solid #e8eaf0;
+
+            padding:
+                28px 18px;
+
+            display: flex;
+            flex-direction: column;
+
+            position: fixed;
+
+            left: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+
+        .logo {
+            padding:
+                0 10px 28px;
+
+            border-bottom:
+                1px solid #eeeef3;
+        }
+
+
+        .logo-title {
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            font-size: 19px;
+            font-weight: 700;
+
+            color: #111827;
+        }
+
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #4f6df5;
+            color: white;
+
+            border-radius: 11px;
+
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+
+        .logo p {
+            margin-top: 7px;
+            margin-left: 46px;
+
+            font-size: 12px;
+
+            color: #9ca3af;
+        }
+
+
+        .menu {
+            margin-top: 28px;
+
+            display: flex;
+            flex-direction: column;
+
+            gap: 7px;
+        }
+
+
+        .menu-title {
+            padding:
+                0 12px 8px;
+
+            font-size: 11px;
+            font-weight: 700;
+
+            color: #a0a5b1;
+
+            letter-spacing: 1px;
+        }
+
+
+        .menu a {
+            display: flex;
+            align-items: center;
+
+            gap: 13px;
+
+            padding:
+                12px 14px;
+
+            border-radius: 10px;
+
+            text-decoration: none;
+
+            color: #646b79;
+
+            font-size: 14px;
+            font-weight: 500;
+
+            transition: 0.2s;
+        }
+
+
+        .menu a:hover {
+            background: #f3f5ff;
+            color: #4f6df5;
+        }
+
+
+        .menu a.active {
+            background: #eef1ff;
+
+            color: #4f6df5;
+
+            font-weight: 700;
+        }
+
+
+        .menu-icon {
+            width: 22px;
+
+            text-align: center;
+
+            font-size: 17px;
+        }
+
+
+        .sidebar-bottom {
+            margin-top: auto;
+
+            padding:
+                18px 12px 5px;
+
+            border-top:
+                1px solid #eeeef3;
+
+            font-size: 12px;
+
+            color: #a0a5b1;
+
+            line-height: 1.6;
+        }
+
+
+        /* =====================================
+           메인
+        ===================================== */
+
+        .main {
+            flex: 1;
+
+            margin-left: 240px;
+
+            min-height: 100vh;
+
+            padding:
+                42px 50px;
+        }
+
+
+        .content {
+            max-width: 850px;
+
+            margin:
+                0 auto;
+        }
+
+
+        /* =====================================
+           제목
+        ===================================== */
+
+        .header {
+            margin-bottom: 25px;
+        }
+
+
+        .header-label {
+            font-size: 12px;
+            font-weight: 700;
+
+            color: #4f6df5;
+
+            letter-spacing: 0.7px;
+
+            margin-bottom: 7px;
+        }
+
+
+        .header h1 {
+            font-size: 27px;
+
+            color: #111827;
+
+            margin-bottom: 8px;
+        }
+
+
+        .header p {
+            font-size: 13px;
+
+            color: #8b91a0;
+
+            line-height: 1.6;
+        }
+
+
+        /* =====================================
+           안내
+        ===================================== */
+
+        .notice {
+            background: #eef1ff;
+
+            border:
+                1px solid #dde2ff;
+
+            border-radius: 12px;
+
+            padding:
+                15px 18px;
+
+            margin-bottom: 18px;
+
+            color: #5968a8;
+
+            font-size: 13px;
+
+            line-height: 1.7;
+        }
+
+
+        /* =====================================
+           문제 카드
+        ===================================== */
+
+        .test-card {
+            background: white;
+
+            border:
+                1px solid #e7e9ef;
+
+            border-radius: 16px;
+
+            padding:
+                27px;
+
+            box-shadow:
+                0 5px 18px
+                rgba(38,46,80,0.04);
+        }
+
+
+        .subject-badge {
+            display: inline-block;
+
+            padding:
+                6px 10px;
+
+            background: #eef1ff;
+
+            border-radius: 7px;
+
+            color: #4f6df5;
+
+            font-size: 12px;
+            font-weight: 700;
+
+            margin-bottom: 22px;
+        }
+
+
+        .question-label {
+            font-size: 11px;
+            font-weight: 700;
+
+            color: #9298a5;
+
+            margin-bottom: 9px;
+
+            letter-spacing: 0.5px;
+        }
+
+
+        .question-box {
+            background: #fafbff;
+
+            border:
+                1px solid #e5e8f8;
+
+            border-radius: 12px;
+
+            padding:
+                20px;
+
+            color: #343a46;
+
+            font-size: 16px;
+            font-weight: 600;
+
+            line-height: 1.7;
+
+            margin-bottom: 25px;
+        }
+
+
+        /* =====================================
+           문제 문장 Markdown
+        ===================================== */
+
+        .question-box p {
+            margin: 0 0 12px;
+        }
+
+
+        .question-box p:last-child {
+            margin-bottom: 0;
+        }
+
+
+        /* =====================================
+           문제 속 코드 블록
+        ===================================== */
+
+        .question-box pre {
+            margin:
+                15px 0;
+
+            padding:
+                16px 18px;
+
+            background: #20232a;
+
+            color: #f3f4f6;
+
+            border-radius: 10px;
+
+            overflow-x: auto;
+
+            font-family:
+                Consolas,
+                Monaco,
+                monospace;
+
+            font-size: 13px;
+            font-weight: 400;
+
+            line-height: 1.65;
+
+            white-space: pre;
+        }
+
+
+        .question-box pre code {
+            background: none;
+
+            color: inherit;
+
+            padding: 0;
+
+            border: none;
+
+            font-family: inherit;
+
+            font-size: inherit;
+            font-weight: inherit;
+
+            white-space: pre;
+        }
+
+
+        /* 문장 안에 들어가는 짧은 코드 */
+
+        .question-box code {
+            padding:
+                2px 5px;
+
+            background: #e9ebf1;
+
+            border-radius: 4px;
+
+            font-family:
+                Consolas,
+                Monaco,
+                monospace;
+
+            font-size: 13px;
+            font-weight: 400;
+        }
+
+
+        /* =====================================
+           답변
+        ===================================== */
+
+        .answer-label {
+            display: block;
+
+            font-size: 12px;
+            font-weight: 700;
+
+            color: #626977;
+
+            margin-bottom: 8px;
+        }
+
+
+        .answer-input {
+            width: 100%;
+
+            min-height: 180px;
+
+            padding:
+                15px;
+
+            border:
+                1px solid #dfe2e9;
+
+            border-radius: 10px;
+
+            resize: vertical;
+
+            outline: none;
+
+            font-family: inherit;
+
+            font-size: 14px;
+
+            line-height: 1.7;
+        }
+
+
+        .answer-input:focus {
+            border-color: #4f6df5;
+        }
+
+
+        /* =====================================
+           버튼
+        ===================================== */
+
+        .actions {
+            margin-top: 18px;
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+
+        .back-button {
+            padding:
+                11px 16px;
+
+            border:
+                1px solid #dfe2e9;
+
+            border-radius: 9px;
+
+            background: white;
+
+            color: #6b7280;
+
+            text-decoration: none;
+
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+
+        .back-button:hover {
+            border-color: #bfc5d4;
+
+            color: #4f5562;
+        }
+
+
+        .submit-button {
+            padding:
+                12px 20px;
+
+            border: none;
+
+            border-radius: 9px;
+
+            background: #4f6df5;
+
+            color: white;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+
+        .submit-button:hover {
+            background: #425fe0;
+        }
+
+
+        /* =====================================
+           반응형
+        ===================================== */
+
+        @media (max-width: 850px) {
+
+            .sidebar {
+                width: 75px;
+
+                padding:
+                    25px 10px;
+            }
+
+
+            .logo-title {
+                justify-content: center;
+            }
+
+
+            .logo-title span:last-child,
+            .logo p,
+            .menu-title,
+            .menu-text,
+            .sidebar-bottom {
+                display: none;
+            }
+
+
+            .menu a {
+                justify-content: center;
+            }
+
+
+            .main {
+                margin-left: 75px;
+
+                padding:
+                    30px 22px;
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            .sidebar {
+                display: none;
+            }
+
+
+            .main {
+                margin-left: 0;
+
+                padding:
+                    25px 15px;
+            }
+
+
+            .test-card {
+                padding: 20px;
+            }
+
+
+            .actions {
+                flex-direction: column;
+            }
+
+
+            .back-button,
+            .submit-button {
+                width: 100%;
+
+                text-align: center;
+            }
+        }
+
+
+    </style>
+
+
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+    <!-- =====================================
+         사이드바
+    ====================================== -->
+
+    <aside class="sidebar">
+
+
+        <div class="logo">
+
+
+            <div class="logo-title">
+
+
+                <div class="logo-icon">
+                    AI
+                </div>
+
+
+                <span>
+                    오답 노트
+                </span>
+
+
+            </div>
+
+
+            <p>
+                Study Assistant
+            </p>
+
+
+        </div>
+
+
+        <nav class="menu">
+
+
+            <div class="menu-title">
+                MENU
+            </div>
+
+
+            <a href="/">
+
+
+                <span class="menu-icon">
+                    🏠
+                </span>
+
+
+                <span class="menu-text">
+                    홈
+                </span>
+
+
+            </a>
+
+
+            <a href="/question">
+
+
+                <span class="menu-icon">
+                    💬
+                </span>
+
+
+                <span class="menu-text">
+                    질문하기
+                </span>
+
+
+            </a>
+
+
+            <a
+                href="/notes?subject={{ subject }}"
+                class="active"
+            >
+
+
+                <span class="menu-icon">
+                    📖
+                </span>
+
+
+                <span class="menu-text">
+                    오답 노트
+                </span>
+
+
+            </a>
+
+
+            <a href="/quiz">
+
+
+                <span class="menu-icon">
+                    📝
+                </span>
+
+
+                <span class="menu-text">
+                    퀴즈 풀기
+                </span>
+
+
+            </a>
+
+
+            <a href="/subjects">
+
+
+                <span class="menu-icon">
+                    📚
+                </span>
+
+
+                <span class="menu-text">
+                    과목 관리
+                </span>
+
+
+            </a>
+
+
+        <form method="post" action="{{ url_for('logout') }}" style="margin:16px 10px;">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<button type="submit" style="width:100%;padding:11px;border:1px solid #e3e5ec;border-radius:9px;background:white;color:#626977;cursor:pointer;">로그아웃</button>
+</form>
+</nav>
+
+
+        <div class="sidebar-bottom">
+
+
+            AI 오답 노트 챗봇<br>
+
+
+            이해한 내용은<br>
+
+
+            테스트 후 정리해보세요.
+
+
+        </div>
+
+
+    </aside>
+
+
+    <!-- =====================================
+         메인
+    ====================================== -->
+
+    <main class="main">
+
+
+        <div class="content">
+
+
+            <div class="header">
+
+
+                <div class="header-label">
+                    UNDERSTANDING CHECK
+                </div>
+
+
+                <h1>
+                    🧠 이해도 확인
+                </h1>
+
+
+                <p>
+                    정말 이해한 내용인지
+                    간단한 문제로 확인해볼게요.
+                </p>
+
+
+            </div>
+
+
+            <div class="notice">
+
+
+                💡 이 문제를 통과하면 해당 내용은
+                오답 노트에서 삭제됩니다.<br>
+
+
+                아직 잘 모르겠다면
+                오답 노트로 돌아가 다시 복습해도 괜찮아요.
+
+
+            </div>
+
+
+            <div class="test-card">
+
+
+                <span class="subject-badge">
+                    {{ subject }}
+                </span>
+
+
+                <div class="question-label">
+                    AI QUESTION
+                </div>
+
+
+                <!--
+                    Markdown으로 변환된 문제 출력
+                -->
+
+                <div class="question-box">
+                    {{ test_question_html | safe }}
+                </div>
+
+
+                <form
+                    method="POST"
+                    action="/notes/complete/check"
+                >
+
+
+                    <input
+                        type="hidden"
+                        name="subject"
+                        value="{{ subject }}"
+                    >
+
+
+                    <input
+                        type="hidden"
+                        name="index"
+                        value="{{ note_index }}"
+                    >
+
+
+                    <!--
+                        채점할 때 사용할 원본 문제.
+                        기존 방식 그대로 유지.
+                    -->
+
+                    <input
+                        type="hidden"
+                        name="test_question"
+                        value="{{ test_question }}"
+                    >
+
+
+                    <label
+                        class="answer-label"
+                        for="user_answer"
+                    >
+                        내 답변
+                    </label>
+
+
+                    <textarea
+                        id="user_answer"
+                        name="user_answer"
+                        class="answer-input"
+                        placeholder="문제에 대한 답을 자신의 말로 작성해보세요."
+                        required
+                    ></textarea>
+
+
+                    <div class="actions">
+
+
+                        <a
+                            href="/notes?subject={{ subject }}"
+                            class="back-button"
+                        >
+                            ← 다시 공부하기
+                        </a>
+
+
+                        <button
+                            type="submit"
+                            class="submit-button"
+                        >
+                            답안 제출
+                        </button>
+
+
+                    </div>
+
+
+                </form>
+
+
+            </div>
+
+
+        </div>
+
+
+    </main>
+
+
+</div>
+
+
+</body>
+
+
+</html>

@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        이해도 확인 결과 | AI 오답 노트
+    </title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+            font-family:
+                Arial,
+                "Noto Sans KR",
+                sans-serif;
+
+            background: #f7f8fc;
+            color: #1f2937;
+        }
+
+
+        .app {
+            min-height: 100vh;
+            display: flex;
+        }
+
+
+        /* =====================================
+           사이드바
+        ===================================== */
+
+        .sidebar {
+            width: 240px;
+            min-height: 100vh;
+
+            background: white;
+
+            border-right:
+                1px solid #e8eaf0;
+
+            padding:
+                28px 18px;
+
+            display: flex;
+            flex-direction: column;
+
+            position: fixed;
+
+            left: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+
+        .logo {
+            padding:
+                0 10px 28px;
+
+            border-bottom:
+                1px solid #eeeef3;
+        }
+
+
+        .logo-title {
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            font-size: 19px;
+            font-weight: 700;
+
+            color: #111827;
+        }
+
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #4f6df5;
+            color: white;
+
+            border-radius: 11px;
+
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+
+        .logo p {
+            margin-top: 7px;
+            margin-left: 46px;
+
+            font-size: 12px;
+
+            color: #9ca3af;
+        }
+
+
+        .menu {
+            margin-top: 28px;
+
+            display: flex;
+            flex-direction: column;
+
+            gap: 7px;
+        }
+
+
+        .menu-title {
+            padding:
+                0 12px 8px;
+
+            font-size: 11px;
+            font-weight: 700;
+
+            color: #a0a5b1;
+
+            letter-spacing: 1px;
+        }
+
+
+        .menu a {
+            display: flex;
+            align-items: center;
+
+            gap: 13px;
+
+            padding:
+                12px 14px;
+
+            border-radius: 10px;
+
+            text-decoration: none;
+
+            color: #646b79;
+
+            font-size: 14px;
+            font-weight: 500;
+
+            transition: 0.2s;
+        }
+
+
+        .menu a:hover {
+            background: #f3f5ff;
+            color: #4f6df5;
+        }
+
+
+        .menu a.active {
+            background: #eef1ff;
+
+            color: #4f6df5;
+
+            font-weight: 700;
+        }
+
+
+        .menu-icon {
+            width: 22px;
+
+            text-align: center;
+
+            font-size: 17px;
+        }
+
+
+        .sidebar-bottom {
+            margin-top: auto;
+
+            padding:
+                18px 12px 5px;
+
+            border-top:
+                1px solid #eeeef3;
+
+            font-size: 12px;
+
+            color: #a0a5b1;
+
+            line-height: 1.6;
+        }
+
+
+        /* =====================================
+           메인
+        ===================================== */
+
+        .main {
+            flex: 1;
+
+            margin-left: 240px;
+
+            min-height: 100vh;
+
+            padding:
+                42px 50px;
+        }
+
+
+        .content {
+            max-width: 900px;
+
+            margin: 0 auto;
+        }
+
+
+        /* =====================================
+           상단 결과
+        ===================================== */
+
+        .result-header {
+            margin-bottom: 25px;
+        }
+
+
+        .header-label {
+            font-size: 12px;
+            font-weight: 700;
+
+            color: #4f6df5;
+
+            letter-spacing: 0.7px;
+
+            margin-bottom: 7px;
+        }
+
+
+        .result-header h1 {
+            font-size: 27px;
+
+            color: #111827;
+
+            margin-bottom: 8px;
+        }
+
+
+        .result-header p {
+            font-size: 13px;
+
+            color: #8b91a0;
+
+            line-height: 1.6;
+        }
+
+
+        /* =====================================
+           결과 상태
+        ===================================== */
+
+        .status-box {
+            padding: 18px 20px;
+
+            border-radius: 13px;
+
+            margin-bottom: 20px;
+        }
+
+
+        .status-box.pass {
+            background: #edf8f1;
+
+            border:
+                1px solid #cce9d7;
+        }
+
+
+        .status-box.fail {
+            background: #fff7ed;
+
+            border:
+                1px solid #f0dcc3;
+        }
+
+
+        .status-title {
+            font-size: 17px;
+            font-weight: 700;
+
+            margin-bottom: 6px;
+        }
+
+
+        .pass .status-title {
+            color: #378158;
+        }
+
+
+        .fail .status-title {
+            color: #9a672d;
+        }
+
+
+        .status-description {
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+
+        .pass .status-description {
+            color: #659276;
+        }
+
+
+        .fail .status-description {
+            color: #a78156;
+        }
+
+
+        /* =====================================
+           카드
+        ===================================== */
+
+        .result-card {
+            background: white;
+
+            border:
+                1px solid #e7e9ef;
+
+            border-radius: 16px;
+
+            padding: 27px;
+
+            box-shadow:
+                0 5px 18px
+                rgba(38, 46, 80, 0.04);
+        }
+
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 700;
+
+            color: #9298a5;
+
+            letter-spacing: 0.5px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .box {
+            padding: 18px 20px;
+
+            border:
+                1px solid #e5e8ef;
+
+            border-radius: 12px;
+
+            background: #fafbfc;
+
+            color: #374151;
+
+            font-size: 14px;
+
+            line-height: 1.75;
+        }
+
+
+        /* =====================================
+           문제 Markdown
+        ===================================== */
+
+        .question-box p {
+            margin:
+                0 0 12px;
+        }
+
+
+        .question-box p:last-child {
+            margin-bottom: 0;
+        }
+
+
+        /* =====================================
+           문제 코드 블록
+        ===================================== */
+
+        .question-box pre {
+            margin:
+                15px 0;
+
+            padding:
+                16px 18px;
+
+            background: #20232a;
+
+            color: #f3f4f6;
+
+            border-radius: 10px;
+
+            overflow-x: auto;
+
+            font-family:
+                Consolas,
+                Monaco,
+                monospace;
+
+            font-size: 13px;
+
+            line-height: 1.65;
+
+            white-space: pre;
+        }
+
+
+        .question-box pre code {
+            padding: 0;
+
+            background: none;
+
+            color: inherit;
+
+            border: none;
+
+            font-family: inherit;
+
+            font-size: inherit;
+
+            white-space: pre;
+        }
+
+
+        .question-box code {
+            padding:
+                2px 5px;
+
+            background: #e9ebf1;
+
+            border-radius: 4px;
+
+            font-family:
+                Consolas,
+                Monaco,
+                monospace;
+
+            font-size: 13px;
+        }
+
+
+        /* =====================================
+           내 답변
+        ===================================== */
+
+        .answer-box {
+            white-space: pre-wrap;
+        }
+
+
+        /* =====================================
+           AI 피드백
+        ===================================== */
+
+        .feedback-box {
+            background: #f1f3ff;
+
+            border-color: #dce1ff;
+        }
+
+
+        .feedback-label {
+            color: #4f6df5;
+        }
+
+
+        .feedback-box p {
+            margin:
+                0 0 9px;
+        }
+
+
+        .feedback-box p:last-child {
+            margin-bottom: 0;
+        }
+
+
+        .feedback-box code {
+            padding:
+                2px 5px;
+
+            background: #e1e5f8;
+
+            border-radius: 4px;
+
+            font-family:
+                Consolas,
+                Monaco,
+                monospace;
+
+            font-size: 13px;
+        }
+
+
+        /* =====================================
+           버튼
+        ===================================== */
+
+        .actions {
+            margin-top: 22px;
+
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 9px;
+        }
+
+
+        .button {
+            display: inline-block;
+
+            padding:
+                11px 16px;
+
+            border-radius: 9px;
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            font-weight: 700;
+        }
+
+
+        .secondary-button {
+            background: white;
+
+            border:
+                1px solid #dfe2e9;
+
+            color: #626977;
+        }
+
+
+        .primary-button {
+            background: #4f6df5;
+
+            border:
+                1px solid #4f6df5;
+
+            color: white;
+        }
+
+
+        .primary-button:hover {
+            background: #425fe0;
+        }
+
+
+        /* =====================================
+           반응형
+        ===================================== */
+
+        @media (max-width: 850px) {
+
+            .sidebar {
+                width: 75px;
+
+                padding:
+                    25px 10px;
+            }
+
+
+            .logo-title {
+                justify-content: center;
+            }
+
+
+            .logo-title span:last-child,
+            .logo p,
+            .menu-title,
+            .menu-text,
+            .sidebar-bottom {
+                display: none;
+            }
+
+
+            .menu a {
+                justify-content: center;
+            }
+
+
+            .main {
+                margin-left: 75px;
+
+                padding:
+                    30px 22px;
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            .sidebar {
+                display: none;
+            }
+
+
+            .main {
+                margin-left: 0;
+
+                padding:
+                    25px 15px;
+            }
+
+
+            .result-card {
+                padding: 20px;
+            }
+
+
+            .actions {
+                flex-direction: column;
+            }
+
+
+            .button {
+                width: 100%;
+
+                text-align: center;
+            }
+        }
+
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+    <!-- =====================================
+         사이드바
+    ====================================== -->
+
+    <aside class="sidebar">
+
+
+        <div class="logo">
+
+
+            <div class="logo-title">
+
+
+                <div class="logo-icon">
+                    AI
+                </div>
+
+
+                <span>
+                    오답 노트
+                </span>
+
+
+            </div>
+
+
+            <p>
+                Study Assistant
+            </p>
+
+
+        </div>
+
+
+        <nav class="menu">
+
+
+            <div class="menu-title">
+                MENU
+            </div>
+
+
+            <a href="/">
+
+                <span class="menu-icon">
+                    🏠
+                </span>
+
+                <span class="menu-text">
+                    홈
+                </span>
+
+            </a>
+
+
+            <a href="/question">
+
+                <span class="menu-icon">
+                    💬
+                </span>
+
+                <span class="menu-text">
+                    질문하기
+                </span>
+
+            </a>
+
+
+            <a
+                href="/notes?subject={{ subject }}"
+                class="active"
+            >
+
+                <span class="menu-icon">
+                    📖
+                </span>
+
+                <span class="menu-text">
+                    오답 노트
+                </span>
+
+            </a>
+
+
+            <a href="/quiz">
+
+                <span class="menu-icon">
+                    📝
+                </span>
+
+                <span class="menu-text">
+                    퀴즈 풀기
+                </span>
+
+            </a>
+
+
+            <a href="/subjects">
+
+                <span class="menu-icon">
+                    📚
+                </span>
+
+                <span class="menu-text">
+                    과목 관리
+                </span>
+
+            </a>
+
+
+        <form method="post" action="{{ url_for('logout') }}" style="margin:16px 10px;">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<button type="submit" style="width:100%;padding:11px;border:1px solid #e3e5ec;border-radius:9px;background:white;color:#626977;cursor:pointer;">로그아웃</button>
+</form>
+</nav>
+
+
+        <div class="sidebar-bottom">
+
+            AI 오답 노트 챗봇<br>
+
+            이해도 확인 결과를<br>
+
+            확인해보세요.
+
+        </div>
+
+
+    </aside>
+
+
+    <!-- =====================================
+         메인
+    ====================================== -->
+
+    <main class="main">
+
+
+        <div class="content">
+
+
+            <!-- =================================
+                 제목
+            ================================== -->
+
+            <div class="result-header">
+
+
+                <div class="header-label">
+                    UNDERSTANDING RESULT
+                </div>
+
+
+                <h1>
+                    🧠 이해도 확인 결과
+                </h1>
+
+
+                <p>
+                    작성한 답변을 AI가 학습 내용과 비교해 확인했습니다.
+                </p>
+
+
+            </div>
+
+
+            <!-- =================================
+                 PASS / FAIL
+            ================================== -->
+
+            {% if passed %}
+
+
+            <div class="status-box pass">
+
+
+                <div class="status-title">
+                    🎉 이해 완료!
+                </div>
+
+
+                <div class="status-description">
+                    핵심 내용을 잘 이해했습니다.
+                    해당 내용은 오답 노트에서 정리되었습니다.
+                </div>
+
+
+            </div>
+
+
+            {% else %}
+
+
+            <div class="status-box fail">
+
+
+                <div class="status-title">
+                    💡 조금 더 복습해보세요
+                </div>
+
+
+                <div class="status-description">
+                    아직 설명이 부족한 부분이 있습니다.
+                    AI 피드백을 확인한 뒤 다시 도전해보세요.
+                </div>
+
+
+            </div>
+
+
+            {% endif %}
+
+
+            <!-- =================================
+                 결과 내용
+            ================================== -->
+
+            <div class="result-card">
+
+
+                <!-- QUESTION -->
+
+                <div class="section">
+
+
+                    <div class="section-label">
+                        QUESTION
+                    </div>
+
+
+                    <div class="box question-box">
+
+                        {{ test_question_html | safe }}
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- MY ANSWER -->
+
+                <div class="section">
+
+
+                    <div class="section-label">
+                        MY ANSWER
+                    </div>
+
+
+                    <div class="box answer-box">
+
+                        {{ user_answer }}
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- AI FEEDBACK -->
+
+                <div class="section">
+
+
+                    <div class="section-label feedback-label">
+                        AI FEEDBACK
+                    </div>
+
+
+                    <div class="box feedback-box">
+
+                        {{ evaluation_html | safe }}
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================
+                 버튼
+            ================================== -->
+
+            <div class="actions">
+
+
+                {% if passed %}
+
+
+                <a
+                    href="/notes?subject={{ subject }}"
+                    class="button primary-button"
+                >
+                    오답 노트로 돌아가기
+                </a>
+
+
+                {% else %}
+
+
+                <a
+                    href="/notes?subject={{ subject }}"
+                    class="button secondary-button"
+                >
+                    다시 공부하기
+                </a>
+
+
+                <a
+                    href="/notes?subject={{ subject }}"
+                    class="button primary-button"
+                >
+                    오답 노트로 돌아가기
+                </a>
+
+
+                {% endif %}
+
+
+            </div>
+
+
+        </div>
+
+
+    </main>
+
+
+</div>
+
+
+</body>
+
+</html>
