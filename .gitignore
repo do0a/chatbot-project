@@ -1,3 +1,24 @@
 mykey.txt
 __pycache__/
 .venv/
+# 비밀키
+.flask_secret
+mykey.txt
+.env
+
+# 데이터베이스
+*.db
+*.db-*
+
+# 개인 오답 노트
+notes/
+subjects.txt
+
+# 백업 및 임시 파일
+*.bak
+*.bak.*
+.gitignore_additions.txt
+
+# 파이썬 임시 파일
+__pycache__/
+*.pycv
